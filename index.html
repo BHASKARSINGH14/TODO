@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List App</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('pexels-pixabay-259915.jpg');
+            /* Replace 'background.jpg' with your image file */
+            background-size: cover;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            /* Set text color to be visible on the background */
+        }
+        
+        h1 {
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Add a semi-transparent background to make text readable */
+        }
+        
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        li {
+            background-color: rgba(255, 255, 255, 0.8);
+            /* Add a semi-transparent background to make items readable */
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>ToDo List</h1>
+    <ul id="taskList"></ul>
+    <input type="text" id="newTask" placeholder="Add a new task">
+    <button onclick="addTask()">Add Task</button>
+
+    <script>
+        async function fetchTasks() {
+            const response = await fetch('/tasks');
+            const tasks = await response.json();
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.textContent = task;
+                taskList.appendChild(li);
+            });
+        }
+
+        async function addTask() {
+            const newTask = document.getElementById('newTask').value;
+            const response = await fetch('/tasks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    task: newTask
+                }),
+            });
+            const result = await response.json();
+            console.log(result.message);
+            fetchTasks();
+        }
+
+        fetchTasks();
+    </script>
+</body>
+
+</html>
